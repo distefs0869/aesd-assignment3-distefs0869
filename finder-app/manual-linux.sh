@@ -53,7 +53,6 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     echo "Building complete!"
     
     echo "Copying image.."
-    mkdir -p ${OUTDIR}/Image
     cp ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ${OUTDIR}/
     echo "Done!"
 fi
