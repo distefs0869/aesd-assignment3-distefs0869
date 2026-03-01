@@ -99,10 +99,14 @@ ${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "Shared library"
 
 # TODO: Add library dependencies to rootfs
 echo "copying dependencies to rootfs"
-cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
-cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libm.so.6 ${OUTDIR}/rootfs/lib64/
-cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libresolv.so.2 ${OUTDIR}/rootfs/lib64/
-cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libc.so.6 ${OUTDIR}/rootfs/lib64/
+#cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
+#cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libm.so.6 ${OUTDIR}/rootfs/lib64/
+#cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libresolv.so.2 ${OUTDIR}/rootfs/lib64/
+#cp ~/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libc.so.6 ${OUTDIR}/rootfs/lib64/
+cp $(${CROSS_COMPILE}gcc -print-sysroot)/lib/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
+cp $(${CROSS_COMPILE}gcc -print-sysroot)/lib64/libm.so.6 ${OUTDIR}/rootfs/lib64/
+cp $(${CROSS_COMPILE}gcc -print-sysroot)/lib64/libresolv.so.2 ${OUTDIR}/rootfs/lib64/
+cp $(${CROSS_COMPILE}gcc -print-sysroot)/lib64/libc.so.6  ${OUTDIR}/rootfs/lib64/
 
 # TODO: Make device nodes
 cd ${OUTDIR}/rootfs
@@ -110,20 +114,20 @@ sudo mknod -m 666 dev/null c 1 3
 sudo mknod -m 666 dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-cd /home/dad/Desktop/finder-app
+cd "$FINDER_APP_DIR"
 make clean
-make CROSS_COMPILE=${CROSS_COMPILE}
+make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE}
 
 # TODO: Copy the finder related scripts and executables to the /home directory
 # on the target rootfs
-cd /home/dad/Desktop
-cp finder-app/finder.sh ${OUTDIR}/rootfs/home/
-cp finder-app/finder-test.sh ${OUTDIR}/rootfs/home/
-cp finder-app/writer.sh ${OUTDIR}/rootfs/home/
-cp finder-app/writer ${OUTDIR}/rootfs/home/
-cp finder-app/autorun-qemu.sh ${OUTDIR}/rootfs/home/
-cp conf/username.txt ${OUTDIR}/rootfs/home/conf/
-cp conf/assignment.txt ${OUTDIR}/rootfs/home/conf/
+cd "$OUTDIR"
+cp ${FINDER_APP_DIR}/finder.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/finder-test.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/writer.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/writer ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/autorun-qemu.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/../conf/username.txt ${OUTDIR}/rootfs/home/conf/
+cp ${FINDER_APP_DIR}/../conf/assignment.txt ${OUTDIR}/rootfs/home/conf/
 
 # TODO: Chown the root directory
 cd "$OUTDIR"
